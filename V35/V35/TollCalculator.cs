@@ -16,10 +16,34 @@ namespace V35
         private const double MODIFIER_LOW_TRAFFIC = 0.5;
         private const double MODIFIER_WEEKEND = 2;
 
+        public static double CalculateWithRuleNames(Vehicle v, DateTime dt)
+        {
+            double price;
+
+            if (v.Weight < WEIGHT_CUTOFF)      
+                price = BASEPRICE_LOW_WEIGHT;
+            else
+                price = BASEPRICE_HIGH_WEIGHT;
+
+            if (v.TypeOfVehicle == Category.Truck)
+                price = BASEPRICE_TRUCK;
+
+            if (v.TypeOfVehicle == Category.Motorcycle)
+                price *= MODIFIER_MC;
+            if (IsHolidayOrWeekend(dt))
+                price *= MODIFIER_WEEKEND;
+            else if (IsLowTrafic(dt))
+                price *= MODIFIER_LOW_TRAFFIC;
+            if (v.IsEco)
+                price *= MODIFIER_ECO;
+            return price;
+        }
+
         public static double Calculate(Vehicle v, DateTime dt)
         {
             return CalculateBasePrice(v) * CalculateCoefficient(v, dt);
         }
+
 
         private static int CalculateBasePrice(Vehicle v)
         {
